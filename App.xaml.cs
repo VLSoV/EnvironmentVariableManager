@@ -1,4 +1,6 @@
 ﻿using EnvManager.Services;
+using EnvManager.ViewModels;
+using EnvManager.Views;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
@@ -19,7 +21,6 @@ public partial class App : Application
         var logFile = Path.Combine("logs", "test-sms-wpf-app-.log");
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Debug()
-            //.WriteTo.Console()
             .WriteTo.File(logFile, rollingInterval: RollingInterval.Day)
             .CreateLogger();
 
@@ -37,6 +38,7 @@ public partial class App : Application
         services.AddSingleton(variableNames);
         services.AddSingleton<EnvironmentService>();
         services.AddSingleton<CommentStorageService>();
+        services.AddSingleton<MainViewModel>();
         services.AddSingleton<MainWindow>();
 
         ServiceProvider = services.BuildServiceProvider();

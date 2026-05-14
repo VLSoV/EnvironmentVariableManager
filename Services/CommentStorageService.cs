@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using EnvManager.Models;
+using Microsoft.Extensions.Logging;
 using System.IO;
 using System.Text.Json;
 
@@ -36,17 +37,23 @@ public class CommentStorageService
         }
         catch (Exception)
         {
-            // Если файл не найден или поврежден, возвращаем пустой словарь
-            _logger.LogInformation("Файл с комментариями не найден или поврежден");
+            // Если файл поврежден, возвращаем пустой словарь
+            _logger.LogError("Файл с комментариями {CommentsFilePath} поврежден", _commentsFilePath);
             return new Dictionary<string, string>();
         }
     }
 
     /// <summary>
-    /// Сохраняет все комментарии в локальный JSON-файл
+    /// Сохраняет новый комментарий в локальный JSON-файл
     /// </summary>
-    public void SaveAllComments(Dictionary<string, string> comments)
+    public void SetComment(EnvironmentVariable variable)
     {
+        var name = variable.Name;
+        var newComment = variable.Comment ?? string.Empty;
+
+        var comments = ReadComments();
+        comments[name] = newComment;
+
         var options = new JsonSerializerOptions
         {
             WriteIndented = true,
@@ -54,6 +61,6 @@ public class CommentStorageService
         };
         var json = JsonSerializer.Serialize(comments, options);
         File.WriteAllText(_commentsFilePath, json);
-        _logger.LogInformation("Комментарии к переменным среды записаны");
+        _logger.LogInformation("Комментарий {NewComment} к переменной среды {Name} записан", newComment, name);
     }
 }

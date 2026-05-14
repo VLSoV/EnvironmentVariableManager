@@ -1,9 +1,8 @@
-﻿using System.ComponentModel;
-using System.Runtime.CompilerServices;
+﻿using EnvManager.ViewModels;
 
 namespace EnvManager.Models;
 
-public class EnvironmentVariable : INotifyPropertyChanged
+public class EnvironmentVariable : ViewModel
 {
     private string _name;
     private string _value;
@@ -12,22 +11,18 @@ public class EnvironmentVariable : INotifyPropertyChanged
     public string Name
     {
         get => _name;
-        set { _name = value; OnPropertyChanged(); }
+        set => Set(ref _name, value);
     }
 
     public string Value
     {
         get => _value;
-        set { _value = value; OnPropertyChanged(); }
+        set => Set(ref _value, value);
     }
 
     public string Comment
     {
         get => _comment;
-        set { _comment = value; OnPropertyChanged(); }
+        set => Set(ref _comment, value);
     }
-
-    public event PropertyChangedEventHandler PropertyChanged;
-    protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 }

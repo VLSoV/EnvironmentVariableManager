@@ -1,17 +1,13 @@
 ﻿using EnvManager.Models;
 using Microsoft.Extensions.Logging;
-using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
-using System.Text;
 
 namespace EnvManager.Services;
 
 public class EnvironmentService(
     ILogger<EnvironmentService> logger,
-    CommentStorageService commentService,
     List<string> variableNames)
 {
-
     // Для оповещения системы об изменении среды
     [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
     private static extern IntPtr SendMessageTimeout(
@@ -24,41 +20,7 @@ public class EnvironmentService(
     private const uint TIMEOUT = 5000;
 
     /// <summary>
-    /// Загружает значения переменных среды и комментарии к ним
-    /// </summary>
-    public void LoadVariables(ObservableCollection<EnvironmentVariable> variableCollection)
-    {
-        var values = ReadVariables();
-        var comments = commentService.ReadComments();
-
-        variableCollection.Clear();
-        foreach (var kvp in values)
-        {
-            variableCollection.Add(new EnvironmentVariable
-            {
-                Name = kvp.Key,
-                Value = kvp.Value,
-                Comment = comments.ContainsKey(kvp.Key) ? comments[kvp.Key] : string.Empty
-            });
-        }
-        logger.LogInformation("Переменные среды загружены");
-    }
-
-    /// <summary>
-    /// Сохраняет значения переменных среды и комментарии к ним
-    /// </summary>
-    public void SaveVariables(ObservableCollection<EnvironmentVariable> variableCollection)
-    {
-        var newValues = variableCollection.ToDictionary(v => v.Name, v => v.Value ?? string.Empty);
-        var newComments = variableCollection.ToDictionary(v => v.Name, v => v.Comment ?? string.Empty);
-
-        WriteAll(newValues, newComments);
-
-        commentService.SaveAllComments(newComments);
-    }
-
-    /// <summary>
-    /// Читает значения пользовательских переменных среды для заданного набора имён.
+    /// Читает значения пользовательских переменных среды.
     /// Если переменная не существует, возвращает пустую строку (значение по умолчанию).
     /// </summary>
     public Dictionary<string, string> ReadVariables()
@@ -74,41 +36,22 @@ public class EnvironmentService(
     }
 
     /// <summary>
-    /// Устанавливает значения переменных среды и фиксирует изменения в лог.
+    /// Устанавливает значение одной переменной среды и пишет в лог.
     /// </summary>
-    public void WriteAll(Dictionary<string, string> newValues, Dictionary<string, string> comments)
+    public void SetVariable(EnvironmentVariable variable)
     {
-        var oldValues = ReadVariables();
+        var name = variable.Name;
+        var newValue = variable.Value ?? string.Empty;
 
-        foreach (var kvp in newValues)
-        {
-            var name = kvp.Key;
-            var newValue = kvp.Value ?? string.Empty;
-            Environment.SetEnvironmentVariable(name, newValue, EnvironmentVariableTarget.User);
-        }
+        if (!variableNames.Contains(name))
+            return;
 
-        // Оповещение системы
+        var oldValue = Environment.GetEnvironmentVariable(name, EnvironmentVariableTarget.User) ?? string.Empty;
+
+        Environment.SetEnvironmentVariable(name, newValue, EnvironmentVariableTarget.User);
         NotifyEnvironmentChange();
 
-        // Формирование сообщения в лог
-        var sb = new StringBuilder();
-        sb.AppendLine("\n=== Переменные среды успешно изменены ===");
-        foreach (var name in variableNames)
-        {
-            var oldVal = oldValues.ContainsKey(name) ? oldValues[name] : "<none>";
-            var newVal = newValues.ContainsKey(name) ? newValues[name] : "<removed>";
-
-            sb.AppendLine($"Переменная: {name}");
-            sb.AppendLine($"Значение: '{oldVal}' -> '{newVal}'");
-
-            // Логируем комментарий, если он есть
-            if (comments != null && comments.ContainsKey(name))
-            {
-                sb.AppendLine($"Комментарий: '{comments[name]}'");
-            }
-            sb.AppendLine();
-        }
-        logger.LogInformation("{Message}", sb.ToString());
+        logger.LogInformation("Variable '{Name}' changed: '{OldValue}' -> '{NewValue}'", name, oldValue, newValue);
     }
 
     private void NotifyEnvironmentChange()
