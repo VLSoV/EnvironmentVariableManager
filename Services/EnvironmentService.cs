@@ -1,4 +1,5 @@
-﻿using EnvManager.Models;
+﻿using EnvManager.Interfaces;
+using EnvManager.Models;
 using Microsoft.Extensions.Logging;
 using System.Runtime.InteropServices;
 
@@ -6,7 +7,7 @@ namespace EnvManager.Services;
 
 public class EnvironmentService(
     ILogger<EnvironmentService> logger,
-    List<string> variableNames)
+    List<string> variableNames) : IEnvironmentService
 {
     // Для оповещения системы об изменении среды
     [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]

@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using EnvManager.Interfaces;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
 
@@ -7,12 +8,12 @@ namespace EnvManager.Services;
 /// <summary>
 /// Сервис отслеживания изменений переменных среды за пределами приложения
 /// </summary>
-public class EnvironmentMonitorService : IDisposable
+public class EnvironmentMonitorService : IDisposable, IEnvironmentMonitorService
 {
     private const int WM_SETTINGCHANGE = 0x001A;
 
     // Окно, которое будет слушать сообщения ОС
-    private Window _targetWindow; 
+    private Window _targetWindow;
     private HwndSource _hwndSource;
     private bool _isDisposed;
 

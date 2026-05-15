@@ -1,4 +1,4 @@
-﻿using EnvManager.Services;
+﻿using EnvManager.Interfaces;
 using EnvManager.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
@@ -18,7 +18,7 @@ public partial class MainWindow : Window
         _scope = serviceProvider.CreateScope();
 
         // Создаем монитор и связываем с главным окном
-        var monitor = _scope.ServiceProvider.GetRequiredService<EnvironmentMonitorService>();
+        var monitor = _scope.ServiceProvider.GetRequiredService<IEnvironmentMonitorService>();
         monitor.Initialize(this);
 
         DataContext = mainViewModel;

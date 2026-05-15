@@ -1,11 +1,12 @@
 ﻿using EnvManager.Common;
+using EnvManager.Interfaces;
 using Microsoft.Extensions.Options;
 using System.IO;
 using System.Windows;
 
 namespace EnvManager.Services;
 
-public class CommentMonitorService : IDisposable
+public class CommentMonitorService : IDisposable, ICommentMonitorService
 {
     private FileSystemWatcher _watcher;
     private readonly string _filePath;

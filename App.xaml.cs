@@ -1,4 +1,5 @@
 ﻿using EnvManager.Common;
+using EnvManager.Interfaces;
 using EnvManager.Services;
 using EnvManager.ViewModels;
 using EnvManager.Views;
@@ -37,12 +38,12 @@ public partial class App : Application
         var services = new ServiceCollection();
         services.AddLogging(builder => builder.AddSerilog(dispose: true));
         services.AddSingleton(variableNames);
-        services.AddSingleton<EnvironmentService>();
-        services.AddSingleton<EnvironmentMonitorService>();
-        services.AddSingleton<CommentStorageService>();
-        services.AddSingleton<CommentMonitorService>();
-        services.AddSingleton<MainViewModel>();
-        services.AddSingleton<MainWindow>();
+        services.AddScoped<IEnvironmentService, EnvironmentService>();
+        services.AddSingleton<IEnvironmentMonitorService, EnvironmentMonitorService>();
+        services.AddScoped<ICommentStorageService, CommentStorageService>();
+        services.AddScoped<ICommentMonitorService, CommentMonitorService>();
+        services.AddScoped<MainViewModel>();
+        services.AddScoped<MainWindow>();
 
         services.Configure<FileSettings>(configuration.GetSection(nameof(FileSettings)));
 

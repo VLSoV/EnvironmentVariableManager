@@ -1,5 +1,5 @@
-﻿using EnvManager.Models;
-using EnvManager.Services;
+﻿using EnvManager.Interfaces;
+using EnvManager.Models;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 
@@ -7,15 +7,16 @@ namespace EnvManager.ViewModels;
 
 public class MainViewModel : ViewModel
 {
-    private readonly EnvironmentService _envService;
-    private readonly CommentStorageService _commentService;
+    private readonly IEnvironmentService _envService;
+    private readonly ICommentStorageService _commentService;
 
     public ObservableCollection<EnvironmentVariable> Variables { get; } = new();
 
-    public MainViewModel(EnvironmentService envService, 
-        EnvironmentMonitorService environmentMonitorService,
-        CommentStorageService commentService, 
-        CommentMonitorService commentMonitorService)
+    public MainViewModel(
+        IEnvironmentService envService, 
+        IEnvironmentMonitorService environmentMonitorService,
+        ICommentStorageService commentService, 
+        ICommentMonitorService commentMonitorService)
     {
         _envService = envService;
         _commentService = commentService;
