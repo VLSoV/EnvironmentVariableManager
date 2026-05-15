@@ -38,6 +38,7 @@ public partial class App : Application
         services.AddSingleton(variableNames);
         services.AddSingleton<EnvironmentService>();
         services.AddSingleton<CommentStorageService>();
+        services.AddSingleton<EnvironmentMonitorService>();
         services.AddSingleton<MainViewModel>();
         services.AddSingleton<MainWindow>();
 

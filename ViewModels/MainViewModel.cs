@@ -12,10 +12,13 @@ public class MainViewModel : ViewModel
 
     public ObservableCollection<EnvironmentVariable> Variables { get; } = new();
 
-    public MainViewModel(EnvironmentService envService, CommentStorageService commentService)
+    public MainViewModel(EnvironmentService envService, 
+        CommentStorageService commentService, 
+        EnvironmentMonitorService environmentMonitorService)
     {
         _envService = envService;
         _commentService = commentService;
+        environmentMonitorService.EnvironmentChanged += LoadData;
 
         LoadData();
     }
