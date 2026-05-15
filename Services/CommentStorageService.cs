@@ -1,5 +1,7 @@
-﻿using EnvManager.Models;
+﻿using EnvManager.Common;
+using EnvManager.Models;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System.IO;
 using System.Text.Json;
 
@@ -9,11 +11,14 @@ public class CommentStorageService
 {
     private readonly string _commentsFilePath;
     private readonly ILogger<EnvironmentService> _logger;
-    public CommentStorageService(ILogger<EnvironmentService> logger)
+    public CommentStorageService(
+        ILogger<EnvironmentService> logger, 
+        IOptions<FileSettings> options)
     {
         // Файл с комментариями хранится локально в той же папке, что и приложение
         var appDirectory = AppDomain.CurrentDomain.BaseDirectory;
-        _commentsFilePath = Path.Combine(appDirectory, "env_comments.json");
+        var fileName = options.Value.CommentStorageFileName;
+        _commentsFilePath = Path.Combine(appDirectory, fileName);
 
         _logger = logger;
     }

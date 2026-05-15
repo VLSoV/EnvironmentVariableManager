@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using EnvManager.Common;
+using Microsoft.Extensions.Options;
+using System.IO;
 using System.Windows;
 
 namespace EnvManager.Services;
@@ -10,32 +12,20 @@ public class CommentMonitorService : IDisposable
 
     public event Action FileChanged;
 
-    public CommentMonitorService()
+    public CommentMonitorService(IOptions<FileSettings> options)
     {
         // Файл с комментариями хранится локально в той же папке, что и приложение
         var appDirectory = AppDomain.CurrentDomain.BaseDirectory;
-        _filePath = Path.Combine(appDirectory, "env_comments.json");
+        var fileName = options.Value.CommentStorageFileName;
+        _filePath = Path.Combine(appDirectory, fileName);
 
-        EnsureDirectoryExists();
-        string directory = Path.GetDirectoryName(_filePath);
-        string fileName = Path.GetFileName(_filePath);
-
-        _watcher = new FileSystemWatcher(directory, fileName)
+        _watcher = new FileSystemWatcher(appDirectory, fileName)
         {
             NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size,
             EnableRaisingEvents = true
         };
 
         _watcher.Changed += (s, e) => Application.Current.Dispatcher.Invoke(() => FileChanged?.Invoke());
-    }
-
-    private void EnsureDirectoryExists()
-    {
-        string directory = Path.GetDirectoryName(_filePath);
-        if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
-        {
-            Directory.CreateDirectory(directory);
-        }
     }
 
     public void Dispose()

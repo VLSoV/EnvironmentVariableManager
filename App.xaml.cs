@@ -1,4 +1,5 @@
-﻿using EnvManager.Services;
+﻿using EnvManager.Common;
+using EnvManager.Services;
 using EnvManager.ViewModels;
 using EnvManager.Views;
 using Microsoft.Extensions.Configuration;
@@ -42,6 +43,8 @@ public partial class App : Application
         services.AddSingleton<CommentMonitorService>();
         services.AddSingleton<MainViewModel>();
         services.AddSingleton<MainWindow>();
+
+        services.Configure<FileSettings>(configuration.GetSection(nameof(FileSettings)));
 
         ServiceProvider = services.BuildServiceProvider();
 
