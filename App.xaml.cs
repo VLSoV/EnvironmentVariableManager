@@ -37,8 +37,9 @@ public partial class App : Application
         services.AddLogging(builder => builder.AddSerilog(dispose: true));
         services.AddSingleton(variableNames);
         services.AddSingleton<EnvironmentService>();
-        services.AddSingleton<CommentStorageService>();
         services.AddSingleton<EnvironmentMonitorService>();
+        services.AddSingleton<CommentStorageService>();
+        services.AddSingleton<CommentMonitorService>();
         services.AddSingleton<MainViewModel>();
         services.AddSingleton<MainWindow>();
 
