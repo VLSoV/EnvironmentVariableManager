@@ -7,86 +7,18 @@
         AllowsTransparency="True"
         Background="Transparent">
     <Window.Resources>
-        <Style TargetType="{x:Type DataGrid}">
-            <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"/>
-            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
-            <Setter Property="BorderBrush" Value="#FF688CAF"/>
-            <Setter Property="BorderThickness" Value="2"/>
-            <Setter Property="RowDetailsVisibilityMode" Value="VisibleWhenSelected"/>
-            <Setter Property="ScrollViewer.CanContentScroll" Value="true"/>
-            <Setter Property="ScrollViewer.PanningMode" Value="Both"/>
-            <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
-            <Setter Property="ClipToBounds" Value="True" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type DataGrid}">
-                        <Grid>
-                            <Border x:Name="Border" CornerRadius="20" Background="#ffffff" BorderBrush="#000000" BorderThickness="2" SnapsToDevicePixels="True"/>
-                            <ScrollViewer x:Name="DG_ScrollViewer" Focusable="false">
-                                <ScrollViewer.OpacityMask>
-                                    <VisualBrush Visual="{Binding ElementName=Border}"/>
-                                </ScrollViewer.OpacityMask>
-                                <ScrollViewer.Template>
-                                    <ControlTemplate TargetType="{x:Type ScrollViewer}">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="Auto"/>
-                                            </Grid.ColumnDefinitions>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="Auto"/>
-                                                <RowDefinition Height="*"/>
-                                                <RowDefinition Height="Auto"/>
-                                            </Grid.RowDefinitions>
-                                            <DataGridColumnHeadersPresenter x:Name="PART_ColumnHeadersPresenter" Grid.Column="1" Visibility="{Binding HeadersVisibility, ConverterParameter={x:Static DataGridHeadersVisibility.Column}, Converter={x:Static DataGrid.HeadersVisibilityConverter}, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"/>
-                                            <ScrollContentPresenter x:Name="PART_ScrollContentPresenter" CanContentScroll="{TemplateBinding CanContentScroll}" Grid.ColumnSpan="2" Grid.Row="1"/>
-                                            <ScrollBar x:Name="PART_VerticalScrollBar" Grid.Column="2" Maximum="{TemplateBinding ScrollableHeight}" Orientation="Vertical" Grid.Row="1" Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}" Value="{Binding VerticalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" ViewportSize="{TemplateBinding ViewportHeight}"/>
-                                            <Grid Grid.Column="1" Grid.Row="2">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="{Binding NonFrozenColumnsViewportHorizontalOffset, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"/>
-                                                    <ColumnDefinition Width="*"/>
-                                                </Grid.ColumnDefinitions>
-                                                <ScrollBar x:Name="PART_HorizontalScrollBar" Grid.Column="1" Maximum="{TemplateBinding ScrollableWidth}" Orientation="Horizontal" Visibility="Visible" Value="{Binding HorizontalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" ViewportSize="{TemplateBinding ViewportWidth}"/>
-                                            </Grid>
-                                        </Grid>
-                                    </ControlTemplate>
-                                </ScrollViewer.Template>
-                                <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
-                            </ScrollViewer>
-                            <Border  CornerRadius="20" BorderBrush="#000000" BorderThickness="2" SnapsToDevicePixels="True"/>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-            <Setter Property="ColumnHeaderStyle">
-                <Setter.Value>
-                    <Style TargetType="{x:Type DataGridColumnHeader}">
-                        <Setter Property="FontWeight" Value="SemiBold" />
-                        <Setter Property="FontSize" Value="13" />
-                        <Setter Property="Foreground" Value="#000000" />
-                        <Setter Property="BorderBrush" Value="#000000" />
-                        <Setter Property="BorderThickness" Value="0,0,1,1" />
-                        <Setter Property="Padding" Value="5,0,0,0" />
-                        <Setter Property="ClipToBounds" Value="True"/>
-                    </Style>
-                </Setter.Value>
-            </Setter>
-            <Style.Triggers>
-                <MultiTrigger>
-                    <MultiTrigger.Conditions>
-                        <Condition Property="IsGrouping" Value="true"/>
-                        <Condition Property="VirtualizingPanel.IsVirtualizingWhenGrouping" Value="false"/>
-                    </MultiTrigger.Conditions>
-                    <Setter Property="ScrollViewer.CanContentScroll" Value="false"/>
-                </MultiTrigger>
-            </Style.Triggers>
-        </Style>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles/DataGridStyles.xaml"/>
+                <ResourceDictionary Source="Styles/ButtonStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Window.Resources>
+
     <Border Background="White" 
-        CornerRadius="20" 
-        BorderBrush="#E0E0E0" 
-        BorderThickness="1">
+            CornerRadius="20" 
+            BorderBrush="#E0E0E0" 
+            BorderThickness="1">
         <Border.Effect>
             <DropShadowEffect BlurRadius="15" ShadowDepth="2" Opacity="0.5"/>
         </Border.Effect>
@@ -111,76 +43,14 @@
                 <!-- Кнопки управления окном -->
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
                     <!-- Кнопка Свернуть -->
-                    <Button x:Name="MinimizeButton" 
-                            Width="30" Height="30" 
-                            Background="Transparent" 
-                            BorderThickness="0"
-                            Click="MinimizeButton_Click"
-                            Cursor="Hand">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Border Background="{TemplateBinding Background}">
-                                    <Grid Width="12" Height="12">
-                                        <Line X1="1" Y1="7" X2="11" Y2="7" 
-                                              Stroke="#333333" 
-                                              StrokeThickness="2"/>
-                                    </Grid>
-                                </Border>
-                                <ControlTemplate.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="Background" Value="#E0E0E0"/>
-                                    </Trigger>
-                                    <Trigger Property="IsPressed" Value="True">
-                                        <Setter Property="Background" Value="#CCCCCC"/>
-                                    </Trigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
+                    <Button Style="{StaticResource MinimizeButtonStyle}" Click="MinimizeButton_Click"/>
                     <!-- Кнопка Закрыть -->
-                    <Button x:Name="CloseButton" 
-                            Width="30" Height="30" 
-                            Background="Transparent" 
-                            BorderThickness="0"
-                            Click="CloseButton_Click"
-                            Cursor="Hand">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Border Background="{TemplateBinding Background}" >
-                                    <Grid Width="12" Height="12">
-                                        <Line X1="1" Y1="1" X2="11" Y2="11" 
-                                              Stroke="#333333" 
-                                              StrokeThickness="3"/>
-                                        <Line X1="11" Y1="1" X2="1" Y2="11" 
-                                              Stroke="#333333" 
-                                              StrokeThickness="3"/>
-                                    </Grid>
-                                </Border>
-                                <ControlTemplate.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="Background" Value="#E81123"/>
-                                        <Setter Property="Foreground" Value="White"/>
-                                        <!-- Меняем цвет линий при наведении -->
-                                    </Trigger>
-                                    <Trigger Property="IsPressed" Value="True">
-                                        <Setter Property="Background" Value="#BF0A1B"/>
-                                    </Trigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
+                    <Button Style="{StaticResource CloseButtonStyle}" Click="CloseButton_Click"/>
                 </StackPanel>
             </Grid>
+
             <Grid Grid.Row="1" Margin="15,5,15,15">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <DataGrid Grid.Row="0" x:Name="VariablesGrid"
-                          ItemsSource="{Binding Variables}"
-                          AutoGenerateColumns="False" CanUserAddRows="False"
-                          CanUserDeleteRows="False" SelectionMode="Single"
-                          HeadersVisibility="Column">
+                <DataGrid Style="{StaticResource RoundedDataGrid}" ItemsSource="{Binding Variables}">
                     <DataGrid.Columns>
                         <DataGridTextColumn IsReadOnly="True" Width="20"/>
                         <DataGridTextColumn Header="Поле" Binding="{Binding Name}" IsReadOnly="True" Width="*"/>
